@@ -1,42 +1,59 @@
 package repository
 
 import (
-	"encoding/json"
+	/**"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"time"
+	"strconv"
+	"time"**/
+
+	"fmt"
 
 	"github.com/MCPutro/rest-api-test/config"
 	"github.com/MCPutro/rest-api-test/entities"
+	//"github.com/MCPutro/rest-api-test/response"
 )
 
 type User struct {
 	entities.UserEntity
 }
 
-func (u User) CreateUser(w http.ResponseWriter, r *http.Request) {
-	requestPayload, _ := ioutil.ReadAll(r.Body)
-	//fmt.Println(string(requestPayload))
-
-	//fmt.Println("header Authorization : ", r.Header.Get("Authorization"))
-
-	//parsing json test to user model
-	var tmp_user User
-	json.Unmarshal(requestPayload, &tmp_user)
-
-	//set createddate
-	tmp_user.CreatedDate = time.Now()
-
-	tmp_user.insertUser()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("oke", "haha") //set data to header resp
-	w.WriteHeader(http.StatusOK)
-
-	//w.Write(result)
+func (u *User) InsertUser() error {
+	db := config.SetupDatabaseCOnnection()
+	result := db.Save(u)
+	if result.Error != nil {
+		return result.Error
+	}
+	config.DbDisconection(db)
+	return nil
 }
 
-func (u *User) insertUser() {
+func (u *User) FindByEmail(email string) (User, error) {
+	tmp_user := User{}
+
 	db := config.SetupDatabaseCOnnection()
-	db.Save(u)
+
+	res := db.Where("email = ?", email).Take(&tmp_user)
+
+	config.DbDisconection(db)
+
+	if res.Error != nil {
+		return tmp_user, res.Error
+	}
+	return tmp_user, nil
+}
+
+func (u *User) FindAll() ([]User, error) {
+	users := []User{}
+	db := config.SetupDatabaseCOnnection()
+
+	res := db.Find(&users)
+
+	config.DbDisconection(db)
+	if res == nil {
+		return nil, res.Error
+	}
+
+	fmt.Println(users)
+	return users, nil
 }
