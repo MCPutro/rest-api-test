@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/MCPutro/rest-api-test/config"
 	repo "github.com/MCPutro/rest-api-test/repository"
@@ -37,11 +38,12 @@ func routing() {
 
 	myRoute := mux.NewRouter().StrictSlash(true)
 
+	PORT := os.Getenv("PORT")
 	myRoute.HandleFunc("/", chectAPI).Methods("GET")
 	myRoute.HandleFunc("/api/user/create", user.CreateUser).Methods("POST")
 	myRoute.HandleFunc("/check", chectAPI).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8080", myRoute))
+	log.Fatal(http.ListenAndServe(":"+PORT, myRoute))
 }
 
 func chectAPI(w http.ResponseWriter, r *http.Request) {
