@@ -41,7 +41,7 @@ func routing() {
 	myRoute.HandleFunc("/api/user/create", user.CreateUser).Methods("POST")
 	myRoute.HandleFunc("/check", chectAPI).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":9999", myRoute))
+	log.Fatal(http.ListenAndServe(":8080", myRoute))
 }
 
 func chectAPI(w http.ResponseWriter, r *http.Request) {
