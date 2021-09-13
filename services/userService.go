@@ -22,18 +22,18 @@ func (ur UserRepository) CreateUser(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("header Authorization : ", r.Header.Get("Authorization"))
 
 	//parsing json test to user model
-	var tmp_user UserRepository
-	json.Unmarshal(requestPayload, &tmp_user)
+	//var tmp_user UserRepository
+	json.Unmarshal(requestPayload, &ur)
 
 	//set createddate
-	tmp_user.CreatedDate = time.Now()
+	ur.CreatedDate = time.Now()
 
 	resp := response.Response{}
 	result := ur.InsertUser()
 	if result != nil {
-		resp = response.Response{Code: strconv.Itoa(http.StatusInternalServerError), Message: result.Error(), Data: tmp_user}
+		resp = response.Response{Code: strconv.Itoa(http.StatusInternalServerError), Message: result.Error(), Data: ur}
 	} else {
-		resp = response.Response{Code: "200", Message: "Succes insert ", Data: tmp_user}
+		resp = response.Response{Code: "200", Message: "Succes insert ", Data: ur}
 	}
 
 	respJson, err := json.Marshal(resp)
@@ -50,10 +50,10 @@ func (ur UserRepository) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (ur UserRepository) FindUserByEmail(w http.ResponseWriter, r *http.Request) {
 	requestPayload, _ := ioutil.ReadAll(r.Body)
-	var tmp_user UserRepository
-	json.Unmarshal(requestPayload, &tmp_user)
+	//var tmp_user UserRepository
+	json.Unmarshal(requestPayload, &ur)
 
-	existingUser, err := ur.FindByEmail(tmp_user.Email)
+	existingUser, err := ur.FindByEmail(ur.Email)
 	if err != nil {
 		//resp := response.Response{Code: "200", Message: "Succes", Data: existingUser}
 	}
