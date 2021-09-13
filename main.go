@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/MCPutro/rest-api-test/config"
 	"github.com/MCPutro/rest-api-test/services"
@@ -37,7 +38,7 @@ func routing() {
 
 	myRoute := mux.NewRouter().StrictSlash(true)
 
-	PORT := "9999" //os.Getenv("PORT")
+	PORT := os.Getenv("PORT")
 	myRoute.HandleFunc("/", chectAPI).Methods("GET")
 	myRoute.HandleFunc("/check", chectAPI).Methods("GET")
 
