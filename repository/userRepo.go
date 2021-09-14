@@ -11,31 +11,39 @@ import (
 
 	"github.com/MCPutro/rest-api-test/config"
 	"github.com/MCPutro/rest-api-test/entities"
+	"gorm.io/gorm"
 	//"github.com/MCPutro/rest-api-test/response"
 )
 
+//
 type User struct {
-	entities.UserEntity
+	entities.User
+	Connection *gorm.DB
 }
 
 func (u *User) InsertUser() error {
-	db := config.SetupDatabaseCOnnection()
-	result := db.Save(u)
+	/**db := config.SetupDatabaseCOnnection()
+	result := db.Save(u)**/
+	//result := u.Connection.Save(u)
+	// u1 := entities.User{Name: "orang1", Email: "orang1@gmail.com", Password: "orang1"}
+	// fmt.Println("u1 : ", u1)
+	fmt.Println("u : ", *u)
+	result := u.Connection.Table("users").Create(u)
 	if result.Error != nil {
 		return result.Error
 	}
-	config.DbDisconection(db)
+	config.DbDisconection(u.Connection)
 	return nil
 }
 
 func (u *User) FindByEmail(email string) (User, error) {
 	tmp_user := User{}
 
-	db := config.SetupDatabaseCOnnection()
+	//db := config.SetupDatabaseCOnnection()
 
-	res := db.Where("email = ?", email).Take(&tmp_user)
+	res := u.Connection.Where("email = ?", email).Take(&tmp_user)
 
-	config.DbDisconection(db)
+	config.DbDisconection(u.Connection)
 
 	if res.Error != nil {
 		return tmp_user, res.Error

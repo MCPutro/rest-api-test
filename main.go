@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/MCPutro/rest-api-test/config"
+	"github.com/MCPutro/rest-api-test/entities"
 	"github.com/MCPutro/rest-api-test/services"
 
 	"github.com/gorilla/mux"
@@ -17,17 +18,32 @@ import (
 var (
 	db *gorm.DB = config.SetupDatabaseCOnnection()
 
-	user services.UserRepository = services.UserRepository{}
+	user services.User = services.User{}
 )
 
 func main() {
-	//defer config.DbDisconection(db)
+	defer config.DbDisconection(db)
 
 	//create table
-	db.AutoMigrate(user)
+	db.AutoMigrate(entities.SocialMedia{})
+	user.Connection = db
+
+	// db.Save(
+	// 	&entities.SocialMedia{
+	// 		Name: "FB",
+	// Accounts: []entities.User{
+	// 	{Name: "orang1", Email: "orang1@gmail.com", Password: "orang1"},
+	// 	{Name: "orang2", Email: "orang2@gmail.com", Password: "orang2"},
+	// },
+	// 	},
+	// )
+
+	// u1 := entities.User{Name: "orang1", Email: "orang1@gmail.com", Password: "orang1"}
+	// db.Save(&u1)
+	//sosMed := repo.SocialMedia{connection: db}
 
 	func() {
-		defer config.DbDisconection(db)
+		//defer config.DbDisconection(db)
 	}()
 	routing()
 
@@ -39,6 +55,9 @@ func routing() {
 	myRoute := mux.NewRouter().StrictSlash(true)
 
 	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "9999"
+	}
 	myRoute.HandleFunc("/", chectAPI).Methods("GET")
 	myRoute.HandleFunc("/check", chectAPI).Methods("GET")
 
