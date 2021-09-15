@@ -10,4 +10,6 @@ type User struct {
 	Password    string
 	Status      bool
 	CreatedDate time.Time `json:"CreatedDate"`
+	//Subscriber  string    `gorm:"-"`
+	//`gorm:",omitempty"`
 }
