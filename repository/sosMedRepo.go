@@ -15,21 +15,24 @@ type SocialMedia struct {
 
 func (sm *SocialMedia) AddSosMed() error {
 	_, isExist := sm.findSosMed()
-	fmt.Println(isExist)
+	//fmt.Println(isExist)
 	if isExist == nil { //positif
 		sm.Connection.Create(&sm.SocialMediaIdentity)
 		return nil
 	}
-	return errors.New("error gan")
+	return errors.New("already exist")
 
 }
 
 func (sm *SocialMedia) findSosMed() (entities.SocialMedia, error) {
 	var exiting entities.SocialMedia
 	hasil := sm.Connection.Where("name = ?", sm.SocialMediaIdentity.Name).Find(&exiting)
+	fmt.Println("findSosMed : ", hasil.Error)
+	fmt.Println("exiting : ", exiting.Id)
 
-	if hasil.Error != nil {
-		return exiting, hasil.Error
+	if exiting.Id == 0 {
+		return exiting, nil
 	}
-	return exiting, nil
+
+	return exiting, errors.New("already exist")
 }

@@ -2,10 +2,8 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/MCPutro/rest-api-test/config"
 	"github.com/MCPutro/rest-api-test/entities"
@@ -20,7 +18,7 @@ type SosMed struct {
 
 func (sm SosMed) CreateSosMed(w http.ResponseWriter, r *http.Request) {
 	requestPayload, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("req masuk : ", string(requestPayload))
+	//fmt.Println("req masuk : ", string(requestPayload))
 
 	json.Unmarshal(requestPayload, &sm.SocialMediaIdentity) //parsing data to variable sm
 
@@ -28,18 +26,17 @@ func (sm SosMed) CreateSosMed(w http.ResponseWriter, r *http.Request) {
 	errorAddSosMed := sm.AddSosMed()
 	//fmt.Fprint(w, errorAddSosMed)
 	//fmt.Println(sm.SocialMediaIdentity)
-	var resp = response.Response{}
+	var resp response.Response
 	if errorAddSosMed != nil {
-		resp = response.Response{Code: strconv.Itoa(http.StatusInternalServerError), Message: errorAddSosMed.Error()}
+		resp = response.Response{Code: "500", Message: errorAddSosMed.Error()}
 	} else {
-		resp = response.Response{Code: "200", Message: "Success", Data: sm}
+		resp = response.Response{Code: "200", Message: "Succes Create Social Media", Data: sm.SocialMediaIdentity}
 	}
-
 	respJson, _ := json.Marshal(resp)
 
 	w.Header().Set("Content-Type", "application/json")
+	//w.Header().Set("oke", "haha") //set data to header resp
 	w.WriteHeader(http.StatusOK)
-
 	w.Write(respJson)
 }
 
