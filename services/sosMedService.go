@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/MCPutro/rest-api-test/config"
 	"github.com/MCPutro/rest-api-test/entities"
 	"github.com/MCPutro/rest-api-test/repository"
+	"github.com/MCPutro/rest-api-test/response"
 	"github.com/gorilla/mux"
 )
 
@@ -22,8 +24,23 @@ func (sm SosMed) CreateSosMed(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(requestPayload, &sm.SocialMediaIdentity) //parsing data to variable sm
 
-	tambahSosMed := sm.AddSosMed()
-	fmt.Fprint(w, tambahSosMed.Error())
+	//tambahSosMed :=
+	errorAddSosMed := sm.AddSosMed()
+	//fmt.Fprint(w, errorAddSosMed)
+	//fmt.Println(sm.SocialMediaIdentity)
+	var resp = response.Response{}
+	if errorAddSosMed != nil {
+		resp = response.Response{Code: strconv.Itoa(http.StatusInternalServerError), Message: errorAddSosMed.Error()}
+	} else {
+		resp = response.Response{Code: "200", Message: "Success", Data: sm}
+	}
+
+	respJson, _ := json.Marshal(resp)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(respJson)
 }
 
 func (sm SosMed) FindAll(w http.ResponseWriter, r *http.Request) {

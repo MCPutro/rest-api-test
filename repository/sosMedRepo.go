@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/MCPutro/rest-api-test/entities"
 	"gorm.io/gorm"
@@ -14,8 +15,8 @@ type SocialMedia struct {
 
 func (sm *SocialMedia) AddSosMed() error {
 	_, isExist := sm.findSosMed()
-	//fmt.Println(isExist)
-	if isExist != nil { //positif
+	fmt.Println(isExist)
+	if isExist == nil { //positif
 		sm.Connection.Create(&sm.SocialMediaIdentity)
 		return nil
 	}
@@ -25,7 +26,7 @@ func (sm *SocialMedia) AddSosMed() error {
 
 func (sm *SocialMedia) findSosMed() (entities.SocialMedia, error) {
 	var exiting entities.SocialMedia
-	hasil := sm.Connection.Where("name = ?", sm.SocialMediaIdentity.Name).Take(&exiting)
+	hasil := sm.Connection.Where("name = ?", sm.SocialMediaIdentity.Name).Find(&exiting)
 
 	if hasil.Error != nil {
 		return exiting, hasil.Error
