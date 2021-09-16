@@ -31,7 +31,7 @@ func SetupDatabaseCOnnection() *gorm.DB {
 		panic("Failed to create a connection to database")
 		//return nil
 	}
-
+	fmt.Println("open connection to db")
 	return db
 }
 
